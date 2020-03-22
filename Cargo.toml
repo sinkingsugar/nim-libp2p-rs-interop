@@ -1,0 +1,13 @@
+[package]
+name = "nim-libp2p-rs-interop"
+version = "0.1.0"
+authors = ["Giovanni Petrantoni <giovanni@status.im>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+libp2p = { git = "https://github.com/SigP/rust-libp2p", rev = "8c272a9a4d115d9a1d33791479527cdcba781829" }
+tokio = "0.1.22"
+futures = "0.3.4"
+env_logger = "0.7.1"
