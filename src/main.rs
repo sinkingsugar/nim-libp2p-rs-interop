@@ -30,7 +30,7 @@ mod client {
             .timeout(std::time::Duration::from_secs(20));
 
         let server_address: Multiaddr = "/ip4/127.0.0.1/tcp/23456".parse().unwrap();
-        let _client = client_transport
+        let client = client_transport
             .dial(server_address.clone())
             .unwrap()
             .map_err(|e| panic!("client error: {}", e))
@@ -39,6 +39,8 @@ mod client {
             })
             .map(|_| ())
             .map_err(|e| panic!("{:?}", e));
+
+        tokio::run(client);
     }
 }
 
@@ -52,6 +54,7 @@ mod server {
     use libp2p::noise::{Keypair, NoiseConfig, X25519};
     use libp2p::tcp::TcpConfig;
     use tokio::{self, io};
+    use std::str;
 
     pub fn main() {
         env_logger::init();
@@ -92,7 +95,11 @@ mod server {
                 io::read_to_end(client, Vec::new())
             })
             .for_each(move |msg| {
-                dbg!(msg.1);
+                if let Ok(msg_str) = str::from_utf8(&(msg.1)) {
+                    dbg!(msg_str);
+                } else {
+                    dbg!(msg.1);
+                }
                 Ok(())
             });
 
