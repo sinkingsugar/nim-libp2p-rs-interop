@@ -1,7 +1,8 @@
 extern crate futures;
 extern crate libp2p;
+extern crate tokio;
 
-#[cfg(feature = "client")]
+#[cfg(not(feature = "server"))]
 mod client {
     use futures::future::Future;
     use libp2p::core::identity;
@@ -10,6 +11,7 @@ mod client {
     use libp2p::core::Multiaddr;
     use libp2p::noise::{Keypair, NoiseConfig, X25519};
     use libp2p::tcp::TcpConfig;
+    use tokio::{self, io};
 
     pub fn main() {
         env_logger::init();
@@ -28,7 +30,7 @@ mod client {
             .timeout(std::time::Duration::from_secs(20));
 
         let server_address: Multiaddr = "/ip4/127.0.0.1/tcp/23456".parse().unwrap();
-        let client = client_transport
+        let _client = client_transport
             .dial(server_address.clone())
             .unwrap()
             .map_err(|e| panic!("client error: {}", e))
@@ -98,7 +100,7 @@ mod server {
     }
 }
 
-#[cfg(feature = "client")]
+#[cfg(not(feature = "server"))]
 fn main() {
     client::main();
 }
