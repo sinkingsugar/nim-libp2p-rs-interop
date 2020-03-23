@@ -1,6 +1,7 @@
+extern crate futures;
 extern crate libp2p;
-extern crate tokio;
 
+#[cfg(feature = "client")]
 mod client {
     use futures::future::Future;
     use libp2p::core::identity;
@@ -9,9 +10,8 @@ mod client {
     use libp2p::core::Multiaddr;
     use libp2p::noise::{Keypair, NoiseConfig, X25519};
     use libp2p::tcp::TcpConfig;
-    use tokio::{self, io};
 
-    fn main() {
+    pub fn main() {
         env_logger::init();
         let client_id = identity::Keypair::generate_ed25519();
 
@@ -37,11 +37,10 @@ mod client {
             })
             .map(|_| ())
             .map_err(|e| panic!("{:?}", e));
-
-        tokio::run(client);
     }
 }
 
+#[cfg(feature = "server")]
 mod server {
     use futures::future::Future;
     use futures::prelude::*;
@@ -52,7 +51,7 @@ mod server {
     use libp2p::tcp::TcpConfig;
     use tokio::{self, io};
 
-    fn main() {
+    pub fn main() {
         env_logger::init();
 
         let server_id = identity::Keypair::generate_ed25519();
@@ -99,6 +98,12 @@ mod server {
     }
 }
 
+#[cfg(feature = "client")]
 fn main() {
-    println!("Hello, world!");
+    client::main();
+}
+
+#[cfg(feature = "server")]
+fn main() {
+    server::main();
 }
